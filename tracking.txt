@@ -1,0 +1,14 @@
+criar dockerfile nas 3 pastas 
+
+front : criar nginx/nginx.conf
+	dockerfile
+
+back : criar dockerfile
+
+bd : criar dockerfile
+
+buildar imgs e tentar rodar com o terraform
+
+pegar os ips dos containers
+
+add vars
