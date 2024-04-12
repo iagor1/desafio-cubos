@@ -4,7 +4,7 @@ import PG from 'pg';
 const port = 3000;
 
 const client = new PG.Client(
-  `postgres://postgres:1234@172.17.0.2:5432`
+  `postgres://postgres:1234@172.18.0.2:5432`
 );
 
 let successfulConnection = false;

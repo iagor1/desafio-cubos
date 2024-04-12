@@ -12,36 +12,83 @@ provider "docker" {
 
 }
 
+data "docker_network" "testenet" {
+  name = "testenet"
+}
 
 resource "docker_container" "postgres" {
   name  = "postgres"
-  image = "2b82210ed6c7"
+  image = "a0ec33dfd00a"
   env = [
     "POSTGRES_PASSWORD=1234"
   ]
   ports {
     internal = 5432
   }
+  networks_advanced {
+    name = data.docker_network.testenet.name
+  }
+  volumes {
+    volume_name    = "teste_volume"
+    container_path = "/var/lib/postgresql/data/"
+  }
 }
 
-resource "docker_container" "nginx" {
-  image = "7adbcc03c27f"
-  name  = "front"
-  ports {
-    internal = 80
-    external = 80
-  }
-  depends_on = [ docker_container.postgres ]
-}
 
 
 
 resource "docker_container" "back" {
-  image = "fd7928712405"
+  image = "29b805cf8f3d"
   name  = "back"
   ports {
     internal = 3000
     external = 3000
   }
-  depends_on = [ docker_container.nginx ]
+  networks_advanced {
+    name = data.docker_network.testenet.name
+  }
+  depends_on = [docker_container.postgres]
 }
+
+resource "docker_container" "nginx" {
+  image = "2224417d2f57"
+  name  = "front"
+  ports {
+    internal = 80
+    external = 80
+  }
+  networks_advanced {
+    name = data.docker_network.testenet.name
+  }
+  depends_on = [docker_container.back]
+}
+
+#add : buildar img com terraform, add arq variables.tf
+
+# resource "docker_image" "banco" {
+#   name = "banco"
+#   build {
+#     context    = "./banco"
+#     tag        = ["banco:develop"]
+#     dockerfile = "Dockerfile"
+#   }
+# }
+
+# resource "docker_container" "postgres" {
+#   name  = "postgres"
+#   image = docker_image.banco.image_id
+#   env = [
+#     var.POSTGRES_PASSWORD
+#   ]
+#   ports {
+#     internal = 5432
+#   }
+#   volumes {
+#     volume_name    = "teste_volume"
+#     container_path = "/var/lib/postgresql/data/"
+#   }
+#   networks_advanced {
+#     name = data.docker_network.testenet.name
+#   }
+#   depends_on = [docker_image.banco]
+# }
