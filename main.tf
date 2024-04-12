@@ -16,11 +16,20 @@ data "docker_network" "testenet" {
   name = "testenet"
 }
 
+resource "docker_image" "postgres" {
+  name = "postgres"
+  build {
+    context    = "./sql"
+    tag        = ["postgres:latest"]
+    dockerfile = "Dockerfile"
+  }
+}
+
 resource "docker_container" "postgres" {
   name  = "postgres"
-  image = "a0ec33dfd00a"
+  image = docker_image.postgres.image_id
   env = [
-    "POSTGRES_PASSWORD=1234"
+    var.POSTGRES_PASSWORD
   ]
   ports {
     internal = 5432
@@ -32,14 +41,23 @@ resource "docker_container" "postgres" {
     volume_name    = "teste_volume"
     container_path = "/var/lib/postgresql/data/"
   }
+  depends_on = [docker_image.postgres  ]
 }
 
+#não precisa criar block resource pro volume pq se n existir vai ser criado
 
+resource "docker_image" "backend" {
+  name = "backend"
+    build {
+    context    = "./backend"
+    tag        = ["backend:latest"]
+    dockerfile = "Dockerfile"
+  }
+}
 
-
-resource "docker_container" "back" {
-  image = "29b805cf8f3d"
-  name  = "back"
+resource "docker_container" "backend" {
+  name  = "backend"
+  image = docker_image.backend.image_id
   ports {
     internal = 3000
     external = 3000
@@ -65,14 +83,6 @@ resource "docker_container" "nginx" {
 
 #add : buildar img com terraform, add arq variables.tf
 
-# resource "docker_image" "banco" {
-#   name = "banco"
-#   build {
-#     context    = "./banco"
-#     tag        = ["banco:develop"]
-#     dockerfile = "Dockerfile"
-#   }
-# }
 
 # resource "docker_container" "postgres" {
 #   name  = "postgres"
