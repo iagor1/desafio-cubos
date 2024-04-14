@@ -76,7 +76,6 @@ resource "docker_container" "backend" {
   networks_advanced {
     name = data.docker_network.cubos_network.name
   }
-  
   restart = "always"
 
   depends_on = [

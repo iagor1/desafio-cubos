@@ -3,8 +3,14 @@ import PG from 'pg';
 
 const port = 3000;
 
+// const port = Number(process.env.port)
+// const user = String(process.env.user)
+// const passwd_database = String(process.env.passwd_database)
+// const host_database = String(process.env.host_database)
+// const port_database = Number(process.env.port_database)
+
 const client = new PG.Client(
-  `postgres://postgres:1234@postgres:5432`
+  `postgres://postgres:Senha23Mais1@postgres:5432`
 );
 
 let successfulConnection = false;
