@@ -72,6 +72,13 @@ resource "docker_container" "backend" {
   networks_advanced {
     name = data.docker_network.cubos_network.name
   }
+  env = [ 
+    "user=${var.user_postgres}",
+    "passwd_database=${var.string_passwd_postgres}",
+    "host_database=${var.host_postgres}",
+    "port_database=${var.port_postgres}",
+    "port=${var.port_backend}"
+    ]
   restart = "always"
 
   depends_on = [
