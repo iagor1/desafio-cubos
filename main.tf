@@ -12,8 +12,18 @@ provider "docker" {
 
 }
 
-data "docker_network" "testenet" {
-  name = "testenet"
+# data "docker_network" "testenet" {
+#   name = "testenet"
+# }
+
+resource "docker_network" "cubos_network" {
+  name = "cubos_network"
+  driver = "bridge"
+}
+
+data "docker_network" "cubos_network" {
+  name = resource.docker_network.cubos_network.name
+
 }
 
 resource "docker_image" "postgres" {
@@ -29,18 +39,19 @@ resource "docker_container" "postgres" {
   name  = "postgres"
   image = docker_image.postgres.image_id
   env = [
-    var.POSTGRES_PASSWORD
+    "POSTGRES_PASSWORD=1234"
   ]
   ports {
     internal = 5432
   }
   networks_advanced {
-    name = data.docker_network.testenet.name
+    name = data.docker_network.cubos_network.name
   }
   volumes {
-    volume_name    = "teste_volume"
+    volume_name    = "postgres_volume"
     container_path = "/var/lib/postgresql/data/"
   }
+  restart = "always"
   depends_on = [docker_image.postgres  ]
 }
 
@@ -63,22 +74,38 @@ resource "docker_container" "backend" {
     external = 3000
   }
   networks_advanced {
-    name = data.docker_network.testenet.name
+    name = data.docker_network.cubos_network.name
   }
-  depends_on = [docker_container.postgres]
+  
+  restart = "always"
+
+  depends_on = [
+   docker_container.postgres,
+   docker_image.backend
+  ]
 }
 
-resource "docker_container" "nginx" {
-  image = "2224417d2f57"
-  name  = "front"
+resource "docker_image" "frontend" {
+  name = "frontend"
+    build {
+    context    = "./frontend"
+    tag        = ["frontend:latest"]
+    dockerfile = "Dockerfile"
+  }
+}
+
+resource "docker_container" "frontend" {
+  image = docker_image.frontend.image_id
+  name  = "frontend"
   ports {
     internal = 80
     external = 80
   }
+  restart = "always"
   networks_advanced {
-    name = data.docker_network.testenet.name
+    name = data.docker_network.cubos_network.name
   }
-  depends_on = [docker_container.back]
+  depends_on = [docker_container.backend, docker_image.frontend]
 }
 
 #add : buildar img com terraform, add arq variables.tf

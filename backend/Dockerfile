@@ -1,8 +1,8 @@
-FROM node:18-alpine3.18
+FROM node:lts-alpine3.19
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/app/
 
-COPY . ./
+COPY . .
 
 RUN npm install
 

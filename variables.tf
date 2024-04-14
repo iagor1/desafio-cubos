@@ -1,3 +1,4 @@
 variable "POSTGRES_PASSWORD" {
-  default = "passwd1234"
+  type = string
+  default = "1234"
 }
