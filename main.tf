@@ -12,12 +12,9 @@ provider "docker" {
 
 }
 
-# data "docker_network" "testenet" {
-#   name = "testenet"
-# }
 
 resource "docker_network" "cubos_network" {
-  name = "cubos_network"
+  name   = "cubos_network"
   driver = "bridge"
 }
 
@@ -51,15 +48,14 @@ resource "docker_container" "postgres" {
     volume_name    = "postgres_volume"
     container_path = "/var/lib/postgresql/data/"
   }
-  restart = "always"
-  depends_on = [docker_image.postgres  ]
+  restart    = "always"
+  depends_on = [docker_image.postgres]
 }
 
-#não precisa criar block resource pro volume pq se n existir vai ser criado
 
 resource "docker_image" "backend" {
   name = "backend"
-    build {
+  build {
     context    = "./backend"
     tag        = ["backend:latest"]
     dockerfile = "Dockerfile"
@@ -79,14 +75,14 @@ resource "docker_container" "backend" {
   restart = "always"
 
   depends_on = [
-   docker_container.postgres,
-   docker_image.backend
+    docker_container.postgres,
+    docker_image.backend
   ]
 }
 
 resource "docker_image" "frontend" {
   name = "frontend"
-    build {
+  build {
     context    = "./frontend"
     tag        = ["frontend:latest"]
     dockerfile = "Dockerfile"
@@ -106,25 +102,3 @@ resource "docker_container" "frontend" {
   }
   depends_on = [docker_container.backend, docker_image.frontend]
 }
-
-#add : buildar img com terraform, add arq variables.tf
-
-
-# resource "docker_container" "postgres" {
-#   name  = "postgres"
-#   image = docker_image.banco.image_id
-#   env = [
-#     var.POSTGRES_PASSWORD
-#   ]
-#   ports {
-#     internal = 5432
-#   }
-#   volumes {
-#     volume_name    = "teste_volume"
-#     container_path = "/var/lib/postgresql/data/"
-#   }
-#   networks_advanced {
-#     name = data.docker_network.testenet.name
-#   }
-#   depends_on = [docker_image.banco]
-# }
