@@ -39,7 +39,7 @@ resource "docker_container" "postgres" {
   name  = "postgres"
   image = docker_image.postgres.image_id
   env = [
-    "POSTGRES_PASSWORD=1234"
+    var.postgres_passwd
   ]
   ports {
     internal = 5432

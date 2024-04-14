@@ -1,4 +1,4 @@
-variable "POSTGRES_PASSWORD" {
+variable "postgres_passwd" {
   type = string
-  default = "1234"
+  default = "POSTGRES_PASSWORD=1234"
 }
