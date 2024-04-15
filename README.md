@@ -75,4 +75,3 @@ Preferível que use um ambiente linux.
 ### Notas Adicionais
 
 - Certifique-se de que as portas necessárias (3000, 5432 e 80.) não estejam sendo utilizadas por outras aplicações.
-- Para mais informações sobre o uso do Terraform e Docker, consulte suas respectivas documentações oficiais.
