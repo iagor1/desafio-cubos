@@ -4,6 +4,7 @@ variable "postgres_passwd" {
   default = "POSTGRES_PASSWORD=Senha23Mais1"
 }
 
+# Vars usadas no backend
 variable "user_postgres" {
   type = string
   default = "postgres"
