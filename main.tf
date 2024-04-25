@@ -67,7 +67,6 @@ resource "docker_container" "backend" {
   image = docker_image.backend.image_id
   ports {
     internal = 3000
-    external = 3000
   }
   networks_advanced {
     name = data.docker_network.cubos_network.name
