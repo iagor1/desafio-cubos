@@ -35,8 +35,9 @@ resource "docker_image" "postgres" {
 resource "docker_container" "postgres" {
   name  = "postgres"
   image = docker_image.postgres.image_id
+
   env = [
-    var.postgres_passwd
+    "POSTGRES_PASSWORD=${var.postgres_passwd}",
   ]
   ports {
     internal = 5432
@@ -71,13 +72,13 @@ resource "docker_container" "backend" {
   networks_advanced {
     name = data.docker_network.cubos_network.name
   }
-  env = [ 
+  env = [
     "user=${var.user_postgres}",
-    "passwd_database=${var.string_passwd_postgres}",
+    "passwd_database=${var.postgres_passwd}",
     "host_database=${var.host_postgres}",
     "port_database=${var.port_postgres}",
     "port=${var.port_backend}"
-    ]
+  ]
   restart = "always"
 
   depends_on = [
